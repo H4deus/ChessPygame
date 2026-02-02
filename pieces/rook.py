@@ -1,0 +1,26 @@
+from piece import Piece
+
+class Rook(Piece):
+    def __init__(self, game, index, value):
+        Piece.__init__(self, game, index, value)
+
+        self.game = game
+
+        self.index = index
+
+        self.has_moved = False
+
+        self.legal_moves = []
+        self.attacks = []
+
+    def get_legal_moves(self, check_checks, board):
+        self.legal_moves = []
+        self.attacks = []
+
+        self.get_straight(self.game.num_of_rows * (self.index // self.game.num_of_rows) - 1, -1, board)  # Left
+        self.get_straight(self.game.num_of_rows * ((self.index + self.game.num_of_rows) // self.game.num_of_rows),1, board)  # Right
+        self.get_straight(-1, -self.game.num_of_rows, board) # Top
+        self.get_straight(self.game.num_of_squares, self.game.num_of_rows, board) # Bottom
+
+        if check_checks:
+            self.check_checks()
