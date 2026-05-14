@@ -1,5 +1,4 @@
-from game import Game
+from program import Program
 
-game = Game()
-game.draw()
-game.main()
+program = Program()
+program.main()

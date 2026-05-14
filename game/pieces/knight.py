@@ -1,8 +1,8 @@
 from piece import Piece
 
 class Knight(Piece):
-    def __init__(self, game, index, value):
-        Piece.__init__(self, game, index, value)
+    def __init__(self, game, graphics_index, index, value, y_offset):
+        Piece.__init__(self, game, graphics_index, index, value, y_offset)
 
         self.game = game
 

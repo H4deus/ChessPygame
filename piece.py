@@ -1,51 +1,50 @@
-from tkinter import *
+import pygame
 
 class Piece:
-    def __init__(self, game, index, value):
+    def __init__(self, game, graphics_index, index, value, y_offset):
         self.game = game
 
         self.color = value % 100 // 10
         self.value = value
 
         self.index = index
-        self.x = self.index % self.game.num_of_rows * self.game.square_size + self.game.square_size / 2
-        self.y = self.index // self.game.num_of_rows * self.game.square_size + self.game.square_size / 2
 
         self.get_image()
-        self.draw()
+        self.x = graphics_index % self.game.num_of_rows * self.game.square_size + self.game.square_size // 2 - self.image.get_rect().width // 2
+        self.y = graphics_index // self.game.num_of_rows * self.game.square_size + self.game.square_size // 2 - self.image.get_rect().height // 2 + y_offset
 
-    def draw(self):
-        self.img = self.game.canvas.create_image(self.x, self.y, image=self.image, anchor=CENTER)
+        self.game.screen.blit(self.image, (self.x, self.y))
 
     def get_image(self):
         match self.value % 100:
             case 1:
-                self.image = PhotoImage(file="sprites/white-pawn.png")
+                self.image = pygame.image.load("images/white-pawn.png")
             case 2:
-                self.image = PhotoImage(file="sprites/white-king.png")
+                self.image = pygame.image.load("images/white-king.png")
             case 3:
-                self.image = PhotoImage(file="sprites/white-queen.png")
+                self.image = pygame.image.load("images/white-queen.png")
             case 4:
-                self.image = PhotoImage(file="sprites/white-rook.png")
+                self.image = pygame.image.load("images/white-rook.png")
             case 5:
-                self.image = PhotoImage(file="sprites/white-bishop.png")
+                self.image = pygame.image.load("images/white-bishop.png")
             case 6:
-                self.image = PhotoImage(file="sprites/white-knight.png")
+                self.image = pygame.image.load("images/white-knight.png")
 
             case 11:
-                self.image = PhotoImage(file="sprites/black-pawn.png")
+                self.image = pygame.image.load("images/black-pawn.png")
             case 12:
-                self.image = PhotoImage(file="sprites/black-king.png")
+                self.image = pygame.image.load("images/black-king.png")
             case 13:
-                self.image = PhotoImage(file="sprites/black-queen.png")
+                self.image = pygame.image.load("images/black-queen.png")
             case 14:
-                self.image = PhotoImage(file="sprites/black-rook.png")
+                self.image = pygame.image.load("images/black-rook.png")
             case 15:
-                self.image = PhotoImage(file="sprites/black-bishop.png")
+                self.image = pygame.image.load("images/black-bishop.png")
             case 16:
-                self.image = PhotoImage(file="sprites/black-knight.png")
+                self.image = pygame.image.load("images/black-knight.png")
+
             case _:
-                self.image = PhotoImage(file="sprites/white-pawn.png")
+                self.image = pygame.image.load("images/white-pawn.png")
 
     def select(self):
         # Selecting own square
@@ -69,6 +68,8 @@ class Piece:
 
     def check_moving(self, index):
         # Allowing the move if the space is empty or the piece is of the other color
+        if self.game.pieces[index] is None:
+            return True
         if self.game.board[index] == 0 or self.game.pieces[index].color != self.color:
             return True
         return False

@@ -1,8 +1,8 @@
 from piece import Piece
 
 class King(Piece):
-    def __init__(self, game, index, value):
-        Piece.__init__(self, game, index, value)
+    def __init__(self, game, graphics_index, index, value, y_offset):
+        Piece.__init__(self, game, graphics_index, index, value, y_offset)
 
         self.game = game
 
@@ -22,12 +22,6 @@ class King(Piece):
                                self.index - 1, self.index + 1,
                                self.index + self.game.num_of_rows - 1, self.index + self.game.num_of_rows, self.index + self.game.num_of_rows + 1]
 
-        for move in self.possible_moves:
-           self.check_index(move)
-
-        if not check_checks:
-            return
-
         # Castling
         if self.color == 0:
             if self.game.white_can_short_castle:
@@ -43,14 +37,22 @@ class King(Piece):
             if self.game.black_can_long_castle:
                 self.check_long_castle(self.game.white_attacks)
 
+        for move in self.possible_moves:
+           self.check_index(move)
+
     def check_index(self, index):
-        if self.check_bounds(index):
-            if self.check_moving(index):
-                if self.color == 0 and self.game.black_attacks[index] == 0:
-                    self.legal_moves.append(index)
-                elif self.color == 1 and self.game.white_attacks[index] == 0:
-                    self.legal_moves.append(index)
-            self.attacks.append(index)
+        if not self.check_bounds(index):
+            return
+
+        self.attacks.append(index)
+
+        if not self.check_moving(index):
+            return
+
+        if self.color == 0 and self.game.black_attacks[index] == 0:
+            self.legal_moves.append(index)
+        elif self.color == 1 and self.game.white_attacks[index] == 0:
+            self.legal_moves.append(index)
 
     def check_short_castle(self, attacks):
         can_short_castle = True
