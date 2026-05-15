@@ -180,7 +180,9 @@ class Game:
                         self.update_lists(self.selected_piece.index - 1, 0)
 
             # Swapping the elements of the lists
+            self.deselect_all(True)
             self.update_lists(index, self.selected_piece.index)
+            self.board[index], self.board[self.selected_piece.index] = (self.board[index] % 100) + 200, (self.board[self.selected_piece.index] % 100) + 200
 
             # Promoting the pawn into a queen
             if self.board[index] % 100 == 1 and index < self.num_of_rows:
@@ -189,7 +191,7 @@ class Game:
                 self.board[index] = 13
 
             self.selected_piece = None
-            self.deselect_all()
+            self.deselect_all(False)
             self.program.update()
             self.black_attacks, self.white_attacks = self.reset_attacks(self.pieces, self.board)
 
@@ -222,18 +224,18 @@ class Game:
 
         # Deselecting the pieces
         if self.pieces[index] is None:
-            self.deselect_all()
+            self.deselect_all(False)
             self.program.update()
             return
 
         # Selecting the piece
         if self.whose_turn and self.pieces[index].color == 0:
-            self.deselect_all()
+            self.deselect_all(False)
             self.pieces[index].select()
             self.selected_piece = self.pieces[index]
             self.program.update()
         elif not self.whose_turn and self.pieces[index].color == 1:
-            self.deselect_all()
+            self.deselect_all(False)
             self.pieces[index].select()
             self.selected_piece = self.pieces[index]
             self.program.update()
@@ -359,8 +361,10 @@ class Game:
 
         return black_attacks, white_attacks
 
-    def deselect_all(self):
+    def deselect_all(self, deselect_highlight):
         for i, v in enumerate(self.board):
+            if v >= 200 and not deselect_highlight:
+                continue
             self.board[i] = v % 100
 
     def quit(self, event):

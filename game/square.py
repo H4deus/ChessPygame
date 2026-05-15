@@ -8,8 +8,11 @@ class Square:
 
         # Getting the color
 
+        # Yellow
+        if value >= 200:
+            color = (255, 232, 141)
         # Light blue
-        if value >= 100:
+        elif value >= 100:
             color = (173, 216, 230)
         # Gray
         elif index % 2 == 0 and index // num_of_rows % 2 == 1 or index % 2 == 1 and index // num_of_rows % 2 == 0:
