@@ -4,6 +4,7 @@ from menu.text import Text
 from menu.button import Button
 from menu.textbox import TextBox
 from menu.popup import PopUp
+from material_indicator import MaterialIndicator
 
 class Menu:
     def __init__(self, program):
@@ -17,7 +18,7 @@ class Menu:
         self.black_won = False
         self.draw = False
 
-        self.which_screen = 0 # 0 - Menu; 1 - Bot; 2 - PvP; 3 - Entering name p1; 4 - Entering name p2; 5 - Are you sure popup;
+        self.which_screen = 0 # 0 - Menu, 1 - Bot, 2 - PvP, 3 - Entering name p1, 4 - Entering name p2, 5 - "Are you sure?" popup
         self.prev_screen = 0
 
         self.background_color = (12, 157, 10)
@@ -80,6 +81,9 @@ class Menu:
 
         self.ays_popup = PopUp("Are you sure?", self.font, "Yes", "No", self.button_color_light, self.button_color_dark, self.button_color_light,
                                (123,123,123), 250, 200, self.screen)
+
+        self.white_material_indicator = MaterialIndicator(0, (0,0,0), self.font, 100, 5, self.screen)
+        self.black_material_indicator = MaterialIndicator(1, (0,0,0), self.font, 100, self.screen.get_width() - 45, self.screen)
 
     def update_names(self, name_top, name_bottom):
         self.player_top_text.text = name_top
@@ -178,6 +182,12 @@ class Menu:
                 self.text_box_p2.string = ""
                 self.program.game_running = True
                 self.program.game.reset(False)
+                if self.player_top_text.get_width() > self.player_bottom_text.get_width():
+                    self.white_material_indicator.x = self.player_top_text.get_width() + 10
+                    self.black_material_indicator.x = self.player_top_text.get_width() + 10
+                else:
+                    self.white_material_indicator.x = self.player_bottom_text.get_width() + 10
+                    self.black_material_indicator.x = self.player_bottom_text.get_width() + 10
                 self.which_screen = 2
 
             # Backing out
@@ -274,6 +284,21 @@ class Menu:
         # "Are you sure?" popup
         elif self.which_screen == 5:
             self.ays_popup.draw(self.screen, mouse_pos)
+
+        # Drawing the material indicators
+        if self.which_screen == 1 or self.which_screen == 2:
+            white_captured_pieces = self.program.game.get_white_captured_pieces()
+            black_captured_pieces = self.program.game.get_black_captured_pieces()
+            white_advantage = self.program.game.get_white_material_advantage()
+            if (self.program.game.flip and self.program.game.whose_turn) or (not self.program.game.flip and self.program.game.white_is_player):
+                self.white_material_indicator.y, self.white_material_indicator.text.y = self.screen.get_height() - 45, self.screen.get_height() - 45
+                self.black_material_indicator.y, self.black_material_indicator.text.y = 5, 5
+            else:
+                self.white_material_indicator.y, self.white_material_indicator.text.y = 5, 5
+                self.black_material_indicator.y, self.black_material_indicator.text.y = self.screen.get_height() - 45, self.screen.get_height() - 45
+            self.white_material_indicator.update(black_captured_pieces, white_advantage)
+            self.black_material_indicator.update(white_captured_pieces, -white_advantage)
+
 
         if self.white_won:
             self.white_won_text.update()

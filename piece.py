@@ -14,38 +14,43 @@ class Piece:
 
         match value:
             case 1:
-                image = pygame.image.load("images/white-pawn.png")
+                self.image = pygame.image.load("images/white-pawn.png")
             case 2:
-                image = pygame.image.load("images/white-king.png")
+                self.image = pygame.image.load("images/white-king.png")
             case 3:
-                image = pygame.image.load("images/white-queen.png")
+                self.image = pygame.image.load("images/white-queen.png")
             case 4:
-                image = pygame.image.load("images/white-rook.png")
+                self.image = pygame.image.load("images/white-rook.png")
             case 5:
-                image = pygame.image.load("images/white-bishop.png")
+                self.image = pygame.image.load("images/white-bishop.png")
             case 6:
-                image = pygame.image.load("images/white-knight.png")
+                self.image = pygame.image.load("images/white-knight.png")
 
             case 11:
-                image = pygame.image.load("images/black-pawn.png")
+                self.image = pygame.image.load("images/black-pawn.png")
             case 12:
-                image = pygame.image.load("images/black-king.png")
+                self.image = pygame.image.load("images/black-king.png")
             case 13:
-                image = pygame.image.load("images/black-queen.png")
+                self.image = pygame.image.load("images/black-queen.png")
             case 14:
-                image = pygame.image.load("images/black-rook.png")
+                self.image = pygame.image.load("images/black-rook.png")
             case 15:
-                image = pygame.image.load("images/black-bishop.png")
+                self.image = pygame.image.load("images/black-bishop.png")
             case 16:
-                image = pygame.image.load("images/black-knight.png")
+                self.image = pygame.image.load("images/black-knight.png")
 
             case _:
-                image = pygame.image.load("images/white-pawn.png")
+                self.image = pygame.image.load("images/white-pawn.png")
 
-        x = graphics_index % self.num_of_rows * game.square_size + game.square_size // 2 - image.get_rect().width // 2
-        y = graphics_index // self.num_of_rows * game.square_size + game.square_size // 2 - image.get_rect().height // 2 + y_offset
+        self.image = pygame.transform.scale(self.image, (game.square_size, game.square_size))
 
-        self.game.screen.blit(image, (x, y))
+        self.x = graphics_index % self.num_of_rows * game.square_size + game.square_size // 2 - self.image.get_rect().width // 2
+        self.y = graphics_index // self.num_of_rows * game.square_size + game.square_size // 2 - self.image.get_rect().height // 2 + y_offset
+
+        self.draw()
+
+    def draw(self):
+        self.game.screen.blit(self.image, (self.x, self.y))
 
     def get_legal_moves(self, index, color, board, pieces, last_move=0, can_en_passant=False, can_short_castle=False, can_long_castle=False):
         if index < 0:
@@ -104,6 +109,22 @@ class Piece:
         if board[index] == 0 or pieces[index].color != color:
             return True
         return False
+
+    def check_short_castle(self, index, board, attacks):
+        can_short_castle = True
+        for i in range(1, 3):
+            if board[index + i] == 0 and attacks[index + i] == 0:
+                continue
+            can_short_castle = False
+        return can_short_castle
+
+    def check_long_castle(self, index, board, attacks):
+        can_long_castle = True
+        for i in range(1, 4):
+            if board[index - i] == 0 and attacks[index - i] == 0:
+                continue
+            can_long_castle = False
+        return can_long_castle
 
     def check_check(self, move, index, color, board, pieces):
         # Simulating the move
@@ -447,19 +468,3 @@ class Piece:
                 legal_moves.remove(move)
         
         return legal_moves, attacks
-
-    def check_short_castle(self, index, board, attacks):
-        can_short_castle = True
-        for i in range(1, 3):
-            if board[index + i] == 0 and attacks[index + i] == 0:
-                continue
-            can_short_castle = False
-        return can_short_castle
-
-    def check_long_castle(self, index, board, attacks):
-        can_long_castle = True
-        for i in range(1, 4):
-            if board[index - i] == 0 and attacks[index - i] == 0:
-                continue
-            can_long_castle = False
-        return can_long_castle

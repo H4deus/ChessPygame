@@ -1,5 +1,5 @@
 import pygame
-from menu.text import Text
+from menu.menu import Text
 
 class TextBox:
     def __init__(self, x, y, width, height, color_active, color_inactive, font, text_color, screen):

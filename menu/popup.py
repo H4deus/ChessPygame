@@ -1,6 +1,6 @@
 import pygame
-from menu.text import Text
-from menu.button import Button
+from menu.menu import Text
+from menu.menu import Button
 
 class PopUp:
     def __init__(self, text, font, button1_text, button2_text, button_color_light, button_color_dark, text_color, background_color, width, height, screen):

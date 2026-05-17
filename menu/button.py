@@ -1,5 +1,5 @@
 import pygame
-from menu.text import Text
+from menu.menu import Text
 
 class Button:
     def __init__(self, x, y, width, height, color_light, color_dark, text, font, text_color, screen):
