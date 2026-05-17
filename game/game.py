@@ -411,6 +411,8 @@ class Game:
         for arrow in self.arrows:
             arr = Arrow(self.screen, arrow[0], arrow[1], self.num_of_rows, self.square_size, self.y_offset)
 
+        if not self.flip:
+            return
         self.timer_top.update()
         self.timer_bottom.update()
         if self.timer_bottom.time <= 0:
