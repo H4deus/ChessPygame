@@ -20,68 +20,68 @@ class Arrow:
 
         if index1 in knight_moves:
             if knight_moves.index(index1) in (0,6):
-                pygame.draw.polygon(self.screen, color, (self.rotate(self.end_tile_x - 50, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(270)),
-                                                    self.rotate(self.end_tile_x + 50, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(270)),
-                                                    self.rotate(self.end_tile_x, self.end_tile_y - 50, self.end_tile_x, self.end_tile_y, math.radians(270))))
+                pygame.draw.polygon(self.screen, color, (self.rotate(self.end_tile_x - 25, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(270)),
+                                                    self.rotate(self.end_tile_x + 25, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(270)),
+                                                    self.rotate(self.end_tile_x, self.end_tile_y - 25, self.end_tile_x, self.end_tile_y, math.radians(270))))
             elif knight_moves.index(index1) in (1,7):
-                pygame.draw.polygon(self.screen, color, (self.rotate(self.end_tile_x - 50, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(90)),
-                                                    self.rotate(self.end_tile_x + 50, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(90)),
-                                                    self.rotate(self.end_tile_x, self.end_tile_y - 50, self.end_tile_x, self.end_tile_y, math.radians(90))))
+                pygame.draw.polygon(self.screen, color, (self.rotate(self.end_tile_x - 25, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(90)),
+                                                    self.rotate(self.end_tile_x + 25, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(90)),
+                                                    self.rotate(self.end_tile_x, self.end_tile_y - 25, self.end_tile_x, self.end_tile_y, math.radians(90))))
             elif knight_moves.index(index1) in (2,3):
-                pygame.draw.polygon(self.screen, color, (self.rotate(self.end_tile_x - 50, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(0)),
-                                                    self.rotate(self.end_tile_x + 50, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(0)),
-                                                    self.rotate(self.end_tile_x, self.end_tile_y - 50, self.end_tile_x, self.end_tile_y, math.radians(0))))
+                pygame.draw.polygon(self.screen, color, (self.rotate(self.end_tile_x - 25, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(0)),
+                                                    self.rotate(self.end_tile_x + 25, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(0)),
+                                                    self.rotate(self.end_tile_x, self.end_tile_y - 25, self.end_tile_x, self.end_tile_y, math.radians(0))))
             elif knight_moves.index(index1) in (4,5):
-                pygame.draw.polygon(self.screen, color, (self.rotate(self.end_tile_x - 50, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(180)),
-                                                    self.rotate(self.end_tile_x + 50, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(180)),
-                                                    self.rotate(self.end_tile_x, self.end_tile_y - 50, self.end_tile_x, self.end_tile_y, math.radians(180))))
+                pygame.draw.polygon(self.screen, color, (self.rotate(self.end_tile_x - 25, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(180)),
+                                                    self.rotate(self.end_tile_x + 25, self.end_tile_y, self.end_tile_x, self.end_tile_y, math.radians(180)),
+                                                    self.rotate(self.end_tile_x, self.end_tile_y - 25, self.end_tile_x, self.end_tile_y, math.radians(180))))
 
             if knight_moves.index(index1) in (0,1):
-                pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y), (self.start_tile_x, self.start_tile_y - size * 2 - 25), 50)
+                pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y), (self.start_tile_x, self.start_tile_y - size * 2 - 12.5), 25)
 
             elif knight_moves.index(index1) in (3,5):
-                pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y), (self.start_tile_x + size * 2 + 25, self.start_tile_y), 50)
+                pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y), (self.start_tile_x + size * 2 + 12.5, self.start_tile_y), 25)
 
             elif knight_moves.index(index1) in (6,7):
-                pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y), (self.start_tile_x, self.start_tile_y + size * 2 + 25), 50)
+                pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y), (self.start_tile_x, self.start_tile_y + size * 2 + 12.5), 25)
 
             elif knight_moves.index(index1) in (2,4):
-                pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y), (self.start_tile_x - size * 2 - 25, self.start_tile_y), 50)
+                pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y), (self.start_tile_x - size * 2 - 12.5, self.start_tile_y), 25)
             
             match knight_moves.index(index1):
                 case 0:
-                    pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y - size * 2), (self.start_tile_x - size, self.start_tile_y - size * 2), 50)
+                    pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y - size * 2), (self.start_tile_x - size, self.start_tile_y - size * 2), 25)
                 
                 case 1:
-                    pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y - size * 2), (self.start_tile_x + size, self.start_tile_y - size * 2), 50)
+                    pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y - size * 2), (self.start_tile_x + size, self.start_tile_y - size * 2), 25)
                 
                 case 2:
-                    pygame.draw.line(self.screen, color, (self.start_tile_x - size * 2, self.start_tile_y), (self.start_tile_x - size * 2, self.start_tile_y - size), 50)
+                    pygame.draw.line(self.screen, color, (self.start_tile_x - size * 2, self.start_tile_y), (self.start_tile_x - size * 2, self.start_tile_y - size), 25)
                 
                 case 3:
-                    pygame.draw.line(self.screen, color, (self.start_tile_x + size * 2, self.start_tile_y), (self.start_tile_x + size * 2, self.start_tile_y - size), 50)
+                    pygame.draw.line(self.screen, color, (self.start_tile_x + size * 2, self.start_tile_y), (self.start_tile_x + size * 2, self.start_tile_y - size), 25)
                 
                 case 4:
-                    pygame.draw.line(self.screen, color, (self.start_tile_x - size * 2, self.start_tile_y), (self.start_tile_x - size * 2, self.start_tile_y + size), 50)
+                    pygame.draw.line(self.screen, color, (self.start_tile_x - size * 2, self.start_tile_y), (self.start_tile_x - size * 2, self.start_tile_y + size), 25)
                 
                 case 5:
-                    pygame.draw.line(self.screen, color, (self.start_tile_x + size * 2, self.start_tile_y), (self.start_tile_x + size * 2, self.start_tile_y + size), 50)
+                    pygame.draw.line(self.screen, color, (self.start_tile_x + size * 2, self.start_tile_y), (self.start_tile_x + size * 2, self.start_tile_y + size), 25)
                 
                 case 6:
-                    pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y + size * 2), (self.start_tile_x - size, self.start_tile_y + size * 2), 50)
+                    pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y + size * 2), (self.start_tile_x - size, self.start_tile_y + size * 2), 25)
                 
                 case 7:
-                    pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y + size * 2), (self.start_tile_x + size, self.start_tile_y + size * 2), 50)
+                    pygame.draw.line(self.screen, color, (self.start_tile_x, self.start_tile_y + size * 2), (self.start_tile_x + size, self.start_tile_y + size * 2), 25)
 
         else:
-            pygame.draw.polygon(self.screen, color, (self.rotate(self.start_tile_x-25, self.start_tile_y, self.start_tile_x, self.start_tile_y),
-                                                     self.rotate(self.end_tile_x-25, self.end_tile_y, self.end_tile_x, self.end_tile_y),
-                                                     self.rotate(self.end_tile_x+25, self.end_tile_y, self.end_tile_x, self.end_tile_y),
-                                                     self.rotate(self.start_tile_x+25, self.start_tile_y, self.start_tile_x, self.start_tile_y)), 0)
+            pygame.draw.polygon(self.screen, color, (self.rotate(self.start_tile_x-12.5, self.start_tile_y, self.start_tile_x, self.start_tile_y),
+                                                     self.rotate(self.end_tile_x-12.5, self.end_tile_y, self.end_tile_x, self.end_tile_y),
+                                                     self.rotate(self.end_tile_x+12.5, self.end_tile_y, self.end_tile_x, self.end_tile_y),
+                                                     self.rotate(self.start_tile_x+12.5, self.start_tile_y, self.start_tile_x, self.start_tile_y)), 0)
 
-            pygame.draw.polygon(self.screen, color,(self.rotate(self.end_tile_x - 50, self.end_tile_y, self.end_tile_x, self.end_tile_y),
-                                                        self.rotate(self.end_tile_x + 50, self.end_tile_y, self.end_tile_x, self.end_tile_y),
-                                                        self.rotate(self.end_tile_x, self.end_tile_y - 50, self.end_tile_x, self.end_tile_y)), 0)
+            pygame.draw.polygon(self.screen, color,(self.rotate(self.end_tile_x - 25, self.end_tile_y, self.end_tile_x, self.end_tile_y),
+                                                        self.rotate(self.end_tile_x + 25, self.end_tile_y, self.end_tile_x, self.end_tile_y),
+                                                        self.rotate(self.end_tile_x, self.end_tile_y - 25, self.end_tile_x, self.end_tile_y)), 0)
 
     def rotate(self, px, py, cx, cy, angle=-4.0):
         if angle <= -4:
