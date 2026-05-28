@@ -12,6 +12,9 @@ class Piece:
         self.index = index
         self.value = value
 
+        if graphics_index < 0:
+            return
+
         match value:
             case 1:
                 self.image = pygame.image.load("images/white-pawn.png")
@@ -52,12 +55,14 @@ class Piece:
     def draw(self):
         self.game.screen.blit(self.image, (self.x, self.y))
 
-    def get_legal_moves(self, index, color, board, pieces, last_move=0, can_en_passant=False, can_short_castle=False, can_long_castle=False):
+    def get_legal_moves(self, board, pieces, index=-1, color=-1, piece=-1, last_move=0, can_en_passant=False, can_short_castle=False, can_long_castle=False):
         if index < 0:
             index = self.index
         if color < 0:
             color = self.color
-        match self.piece:
+        if piece < 0:
+            piece = self.piece
+        match piece:
             case 1:
                 return self.get_pawn_legal_moves_and_attacks(index, color, True, board, pieces, last_move, can_en_passant)[0]
             case 2:
@@ -74,12 +79,14 @@ class Piece:
             case _:
                 return []
 
-    def get_attacks(self, index, color, board, pieces, last_move=0, can_en_passant=False, can_short_castle=False, can_long_castle=False):
+    def get_attacks(self, board, pieces, index=-1, color=-1, piece=-1, last_move=0, can_en_passant=False, can_short_castle=False, can_long_castle=False):
         if index < 0:
             index = self.index
         if color < 0:
             color = self.color
-        match self.piece:
+        if piece < 0:
+            piece = self.piece
+        match piece:
             case 1:
                 return self.get_pawn_legal_moves_and_attacks(index, color, False, board, pieces, last_move, can_en_passant)[1]
             case 2:
@@ -370,10 +377,10 @@ class Piece:
             enemy_attacks = self.game.reset_attacks(pieces, board)[color]
         
         # Castling
-            if can_short_castle and self.check_short_castle(index, board, enemy_attacks):
+            if can_short_castle and self.check_short_castle(index, board, enemy_attacks) and enemy_attacks[index] == 0:
                 legal_moves.append(index + 2)
 
-            if can_long_castle and self.check_long_castle(index, board, enemy_attacks):
+            if can_long_castle and self.check_long_castle(index, board, enemy_attacks) and enemy_attacks[index] == 0:
                 legal_moves.append(index - 2)
         
         for move in possible_moves:
@@ -444,6 +451,7 @@ class Piece:
         # Black
         elif color == 1:
             # Getting the moves forward
+            print(len(board), index)
             if board[index + self.num_of_rows] == 0:
                 if index in range(8, 16) and board[index + self.num_of_rows * 2] == 0:
                     legal_moves.append(index + self.num_of_rows * 2)

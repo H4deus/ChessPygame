@@ -4,7 +4,7 @@ from piece import Piece
 from game.square import Square
 from game.arrow import Arrow
 from game.timer import Timer
-# from game.bot import Bot
+from game.bot import Bot
 import random
 
 
@@ -28,9 +28,9 @@ class Game:
         self.pieces = []
         self.squares = []
 
-        self.font = pygame.font.SysFont("comicsans", 30)
+        self.font = pygame.font.SysFont("arial", 30)
 
-        # self.bot = Bot(self)
+        self.bot = Bot(self)
         self.timer_top = Timer(600, 5, self.font, (255, 255, 255), self.screen)
         self.timer_bottom = Timer(600, self.screen.get_height() - 45, self.font, (255, 255, 255), self.screen)
 
@@ -53,8 +53,10 @@ class Game:
             self.flip = False
             if random.random() < 0.5:
                 self.white_is_player = True
+                self.bot.color = 1
             else:
                 self.white_is_player = False
+                self.bot.color = 0
 
             self.timer_top.hide = True
             self.timer_bottom.hide = True
@@ -116,6 +118,7 @@ class Game:
                            0, 0, 0, 0, 0, 0, 0, 0]
 
         self.arrows = []
+        self.drawn_arrows = []
 
         self.past_positions = []
 
@@ -146,12 +149,17 @@ class Game:
             return
 
         # Moving the piece, taking others and castling
-        if self.selected_piece is not None and self.highlights[index] % 10 == 1 and self.selected_piece.index != index:
+
+        if (not self.flip and self.whose_turn and not self.white_is_player) or (not self.flip and not self.whose_turn and self.white_is_player):
+            bot_move = self.bot.get_move(self.pieces, self.board, self.last_move, self.can_en_passant,
+                                         self.white_can_short_castle, self.black_can_short_castle,
+                                         self.white_can_long_castle, self.black_can_long_castle)
             self.fifty_move_rule += 1
             self.whose_turn = not self.whose_turn
-            self.timer_top.time, self.timer_bottom.time = self.timer_bottom.time, self.timer_top.time
-            self.timer_top.pause = True
-            self.timer_bottom.pause = False
+
+            self.selected_piece = self.pieces[bot_move[0]]
+            index = bot_move[1]
+
 
             # Taking the piece if possible
             if self.board[index] != 0:
@@ -159,7 +167,7 @@ class Game:
                 if self.board[index] in (1,4,5,6,11,14,15,16):
                     self.past_positions = []
                 self.board[index] = 0
-                del self.pieces[index]
+                self.pieces[index] = None
 
             # En passant
             if self.selected_piece.value % 10 == 1:
@@ -168,9 +176,13 @@ class Game:
                 if self.pieces[self.selected_piece.index + 1] is not None and self.selected_piece.color == self.pieces[self.selected_piece.index + 1].color:
                     pass
 
-                elif self.can_en_passant and self.board[self.selected_piece.index + 1] % 10 == 1 and index == self.selected_piece.index - 1 - self.num_of_rows:
+                elif self.can_en_passant and self.board[self.selected_piece.index + 1] % 10 == 1 and index == self.selected_piece.index + 1 - self.num_of_rows:
                     self.board[self.selected_piece.index + 1] = 0
-                    del self.pieces[self.selected_piece.index + 1]
+                    self.pieces[self.selected_piece.index + 1] = None
+
+                elif self.can_en_passant and self.board[self.selected_piece.index + 1] % 10 == 1 and index == self.selected_piece.index + 1 + self.num_of_rows:
+                    self.board[self.selected_piece.index + 1] = 0
+                    self.pieces[self.selected_piece.index + 1] = None
 
                 # En passant to the left
                 elif self.pieces[self.selected_piece.index - 1] is not None and self.selected_piece.color == self.pieces[self.selected_piece.index - 1].color:
@@ -178,13 +190,19 @@ class Game:
 
                 elif self.can_en_passant and self.board[self.selected_piece.index - 1] % 10 == 1 and index == self.selected_piece.index - 1 - self.num_of_rows:
                     self.board[self.selected_piece.index - 1] = 0
-                    del self.pieces[self.selected_piece.index - 1]
+                    self.pieces[self.selected_piece.index - 1] = None
+
+                elif self.can_en_passant and self.board[self.selected_piece.index - 1] % 10 == 1 and index == self.selected_piece.index - 1 + self.num_of_rows:
+                    self.board[self.selected_piece.index - 1] = 0
+                    self.pieces[self.selected_piece.index - 1] = None
 
                 # Checking if can en passant
                 if abs(index - self.selected_piece.index) == 2 * self.num_of_rows:
                     self.can_en_passant = True
                 else:
                     self.can_en_passant = False
+            else:
+                self.can_en_passant = False
 
             # Castling
             # Disallowing if any of the relevant pieces have moved
@@ -259,7 +277,134 @@ class Game:
                 self.program.menu.draw = True
 
             self.last_move = index
-            # self.bot.evaluate_pos(self.pieces, self.board)
+            if self.flip:
+                self.program.menu.swap_players()
+            self.past_positions.append(self.board)
+            return
+
+        if self.selected_piece is not None and self.highlights[index] % 10 == 1 and self.selected_piece.index != index:
+            self.fifty_move_rule += 1
+            self.whose_turn = not self.whose_turn
+            self.timer_top.time, self.timer_bottom.time = self.timer_bottom.time, self.timer_top.time
+            self.timer_top.pause = True
+            self.timer_bottom.pause = False
+
+            # Taking the piece if possible
+            if self.board[index] != 0:
+                self.fifty_move_rule = 0
+                if self.board[index] in (1,4,5,6,11,14,15,16):
+                    self.past_positions = []
+                self.board[index] = 0
+                self.pieces[index] = None
+
+            # En passant
+            if self.selected_piece.value % 10 == 1:
+                self.fifty_move_rule = 0
+                # En passant to the right
+                if self.pieces[self.selected_piece.index + 1] is not None and self.selected_piece.color == self.pieces[self.selected_piece.index + 1].color:
+                    pass
+
+                elif self.can_en_passant and self.board[self.selected_piece.index + 1] % 10 == 1 and index == self.selected_piece.index + 1 - self.num_of_rows:
+                    self.board[self.selected_piece.index + 1] = 0
+                    self.pieces[self.selected_piece.index + 1] = None
+
+                elif self.can_en_passant and self.board[self.selected_piece.index + 1] % 10 == 1 and index == self.selected_piece.index + 1 + self.num_of_rows:
+                    self.board[self.selected_piece.index + 1] = 0
+                    self.pieces[self.selected_piece.index + 1] = None
+
+                # En passant to the left
+                elif self.pieces[self.selected_piece.index - 1] is not None and self.selected_piece.color == self.pieces[self.selected_piece.index - 1].color:
+                    pass
+
+                elif self.can_en_passant and self.board[self.selected_piece.index - 1] % 10 == 1 and index == self.selected_piece.index - 1 - self.num_of_rows:
+                    self.board[self.selected_piece.index - 1] = 0
+                    self.pieces[self.selected_piece.index - 1] = None
+
+                elif self.can_en_passant and self.board[self.selected_piece.index - 1] % 10 == 1 and index == self.selected_piece.index - 1 + self.num_of_rows:
+                    self.board[self.selected_piece.index - 1] = 0
+                    self.pieces[self.selected_piece.index - 1] = None
+
+                # Checking if can en passant
+                if abs(index - self.selected_piece.index) == 2 * self.num_of_rows:
+                    self.can_en_passant = True
+                else:
+                    self.can_en_passant = False
+            else:
+                self.can_en_passant = False
+
+            # Castling
+            # Disallowing if any of the relevant pieces have moved
+            if self.board[63] != 4 or self.board[60] != 2:
+                self.white_can_short_castle = False
+
+            if self.board[56] != 4 or self.board[60] != 2:
+                self.white_can_long_castle = False
+
+            if self.board[7] != 14 or self.board[4] != 12:
+                self.black_can_short_castle = False
+
+            if self.board[0] != 14 or self.board[4] != 12:
+                self.black_can_long_castle = False
+
+            # Moving the rook if the king castled
+            if self.selected_piece.value % 10 == 2 and abs(self.selected_piece.index - index) == 2:
+                # White
+                if self.selected_piece.color == 0:
+                    # Short castle
+                    if self.selected_piece.index < index:
+                        self.update_lists(self.selected_piece.index + 1, 63)
+                    # Long castle
+                    if self.selected_piece.index > index:
+                        self.update_lists(self.selected_piece.index - 1, 56)
+                # Black
+                elif self.selected_piece.color == 1:
+                    # Short castle
+                    if self.selected_piece.index < index:
+                        self.update_lists(self.selected_piece.index + 1, 7)
+                    # Long castle
+                    if self.selected_piece.index > index:
+                        self.update_lists(self.selected_piece.index - 1, 0)
+
+            # Swapping the elements of the lists
+            self.deselect_all(True)
+            self.update_lists(index, self.selected_piece.index)
+            self.highlights[index], self.highlights[self.selected_piece.index] = 10, 10
+
+            # Promoting the pawn into a queen
+            if self.board[index] == 1 and index < self.num_of_rows:
+                self.board[index] = 3
+            elif self.board[index] == 11 and index >= self.num_of_squares - self.num_of_rows:
+                self.board[index] = 13
+
+            self.selected_piece = None
+            self.deselect_all(False)
+            self.program.update()
+            self.black_attacks, self.white_attacks = self.reset_attacks(self.pieces, self.board)
+
+            # Checking if white is in check
+            if self.black_attacks[self.board.index(2)] != 0:
+                self.white_in_check = True
+                self.highlights[self.board.index(2)] = 20
+            else:
+                self.white_in_check = False
+
+            # Checking if black is in check
+            if self.white_attacks[self.board.index(12)] != 0:
+                self.black_in_check = True
+                self.highlights[self.board.index(12)] = 20
+            else:
+                self.black_in_check = False
+
+            # Checking for victory and draws
+            if self.check_win():
+                if self.whose_turn:
+                    self.program.menu.black_won = True
+                else:
+                    self.program.menu.white_won = True
+            elif self.check_draw():
+                self.program.menu.draw = True
+
+            self.last_move = index
             if self.flip:
                 self.program.menu.swap_players()
             self.past_positions.append(self.board)
@@ -274,13 +419,13 @@ class Game:
         # Selecting the piece
         if self.whose_turn and self.pieces[index].color == 0:
             self.deselect_all(False)
-            moves = self.pieces[index].get_legal_moves(-1, -1, self.board, self.pieces, self.last_move, self.can_en_passant, self.white_can_short_castle, self.white_can_long_castle)
+            moves = self.pieces[index].get_legal_moves(self.board, self.pieces, -1, -1, -1, self.last_move, self.can_en_passant, self.white_can_short_castle, self.white_can_long_castle)
             self.highlight_moves(moves, index)
             self.selected_piece = self.pieces[index]
             self.program.update()
         elif not self.whose_turn and self.pieces[index].color == 1:
             self.deselect_all(False)
-            moves = self.pieces[index].get_legal_moves(-1, -1, self.board, self.pieces, self.last_move, self.can_en_passant, self.black_can_short_castle, self.black_can_long_castle)
+            moves = self.pieces[index].get_legal_moves(self.board, self.pieces, -1, -1, -1, self.last_move, self.can_en_passant, self.black_can_short_castle, self.black_can_long_castle)
             self.highlight_moves(moves, index)
             self.selected_piece = self.pieces[index]
             self.program.update()
@@ -321,7 +466,7 @@ class Game:
         self.board = self.swap_in_list(self.board, a, b)
 
     def check_win(self):
-        if self.timer_bottom.time <= 0:
+        if self.timer_bottom.time <= 0 and self.flip:
             return True
         if not self.white_in_check and not self.black_in_check:
             return False
@@ -332,9 +477,9 @@ class Game:
 
             moves = []
             if piece.color == 0:
-                moves = piece.get_legal_moves(-1, -1, self.board, self.pieces, self.last_move, self.can_en_passant, self.white_can_short_castle, self.white_can_long_castle)
+                moves = piece.get_legal_moves(self.board, self.pieces, -1, -1, -1, self.last_move, self.can_en_passant, self.white_can_short_castle, self.white_can_long_castle)
             elif piece.color == 1:
-                moves = piece.get_legal_moves(-1, -1, self.board, self.pieces, self.last_move, self.can_en_passant, self.black_can_short_castle, self.black_can_long_castle)
+                moves = piece.get_legal_moves(self.board, self.pieces, -1, -1, -1, self.last_move, self.can_en_passant, self.black_can_short_castle, self.black_can_long_castle)
 
             if (self.white_in_check and piece.color == 0 and len(moves) > 0) or (self.black_in_check and piece.color == 1 and len(moves) > 0):
                 return False
@@ -362,9 +507,9 @@ class Game:
 
             moves = []
             if piece.color == 0:
-                moves = piece.get_legal_moves(-1, -1, self.board, self.pieces, self.last_move, self.can_en_passant, self.white_can_short_castle, self.white_can_long_castle)
+                moves = piece.get_legal_moves(self.board, self.pieces, -1, -1, -1, self.last_move, self.can_en_passant, self.white_can_short_castle, self.white_can_long_castle)
             elif piece.color == 1:
-                moves = piece.get_legal_moves(-1, -1, self.board, self.pieces, self.last_move, self.can_en_passant, self.black_can_short_castle, self.black_can_long_castle)
+                moves = piece.get_legal_moves(self.board, self.pieces, -1, -1, -1, self.last_move, self.can_en_passant, self.black_can_short_castle, self.black_can_long_castle)
 
             if piece.color == 0 and len(moves) > 0:
                 white_stalemate = False
@@ -410,6 +555,7 @@ class Game:
 
         for arrow in self.arrows:
             arr = Arrow(self.screen, arrow[0], arrow[1], self.num_of_rows, self.square_size, self.y_offset)
+            self.drawn_arrows.append(arr)
 
         if not self.flip:
             return
@@ -432,7 +578,7 @@ class Game:
         for piece in pieces:
             if piece is None:
                 continue
-            attacks = piece.get_attacks(-1, -1, board, pieces)
+            attacks = piece.get_attacks(board, pieces)
             if piece.color == 0:
                 for attack in attacks:
                     white_attacks[attack] += 1
@@ -446,6 +592,9 @@ class Game:
     def deselect_all(self, deselect_highlight):
         if deselect_highlight:
             self.arrows = []
+            for arrow in self.drawn_arrows:
+                del arrow
+            self.drawn_arrows = []
         for i, v in enumerate(self.highlights):
             if v >= 10 and not deselect_highlight:
                 self.highlights[i] = (v // 10) * 10

@@ -13,6 +13,7 @@ class MaterialIndicator:
 
     def update(self, captured_pieces, adv):
         offset = 0
+        last_piece = 0
         for piece in captured_pieces:
             match piece:
                 case 1:
@@ -43,9 +44,12 @@ class MaterialIndicator:
                 case _:
                     img = pygame.image.load("images/black-pawn.png")
 
+            if piece == last_piece:
+                offset -= 20
             img = pygame.transform.scale(img, (40, 40))
             self.screen.blit(img, (self.x + offset, self.y))
             offset += img.get_width()
+            last_piece = piece
 
         if adv <= 0:
             return

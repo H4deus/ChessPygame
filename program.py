@@ -1,5 +1,4 @@
 import pygame
-from datetime import datetime
 from game.game import Game
 from menu.menu import Menu
 

@@ -22,15 +22,15 @@ class Menu:
         self.prev_screen = 0
 
         self.background_color = (12, 157, 10)
-        self.button_color_light = (255, 255, 255)
-        self.button_color_dark = (0, 0, 0)
+        self.button_color_light = (189, 189, 189)
+        self.button_color_dark = (35, 35, 35)
 
-        self.font = pygame.font.SysFont("comicsans", 30)
-        self.font2 = pygame.font.SysFont("comicsans", 60)
+        self.font = pygame.font.SysFont("arial", 30)
+        self.font2 = pygame.font.SysFont("arial", 60)
 
         # Menu
 
-        self.title = Text(-1, 50, "Chess", self.font2, self.button_color_dark, self.screen)
+        self.title = Text(-1, 50, "Chess", self.font2, (255, 255, 255), self.screen)
         self.button_bot = Button(-1, 200, 100, 50, self.button_color_light, self.button_color_dark, "Bot", self.font, (255, 255, 255), self.screen)
         self.button_pvp = Button(-1, 300, 100, 50, self.button_color_light, self.button_color_dark, "PvP", self.font, (255, 255, 255), self.screen)
         self.button_quit = Button(-1, 400, 100, 50, self.button_color_light, self.button_color_dark, "Quit", self.font, (255, 255, 255), self.screen)
@@ -38,28 +38,28 @@ class Menu:
         # Board
 
         self.resign_button_bottom = Button(self.width - 120, self.height - 45, 110, 40, self.button_color_light, self.button_color_dark,
-                                           "Resign", self.font, self.button_color_light, self.screen)
+                                           "Resign", self.font, (255, 255, 255), self.screen)
 
         self.resign_button_top = Button(self.width - 120, 5, 110, 40, self.button_color_light, self.button_color_dark,
-                                        "Resign", self.font, self.button_color_light, self.screen)
+                                        "Resign", self.font, (255, 255, 255), self.screen)
 
         self.draw_button_top = Button(self.width - 240, 5, 110, 40, self.button_color_light, self.button_color_dark,
-                                   "Draw", self.font, self.button_color_light, self.screen)
+                                   "Draw", self.font, (255, 255, 255), self.screen)
 
         self.draw_button_bottom = Button(self.width - 240, self.height - 45, 110, 40, self.button_color_light, self.button_color_dark,
-                                   "Draw", self.font, self.button_color_light, self.screen)
+                                   "Draw", self.font, (255, 255, 255), self.screen)
 
         # Entering name 1
 
         self.player1_tip = Text(-1, 50, "Enter Player1 name", self.font, self.button_color_dark, self.screen)
-        self.text_box_p1 = TextBox(-1, 100, 300, 50, self.button_color_light, self.button_color_dark, self.font, self.button_color_dark, self.screen)
-        self.confirm_button_p1 = Button(-1, 160, 200, 50, self.button_color_light, self.button_color_dark, "Confirm", self.font, self.button_color_light, self.screen)
+        self.text_box_p1 = TextBox(-1, 100, 300, 50, self.button_color_light, (123, 123, 123), self.font, (0, 0, 0), self.screen)
+        self.confirm_button_p1 = Button(-1, 160, 200, 50, self.button_color_light, self.button_color_dark, "Confirm", self.font, (255, 255, 255), self.screen)
 
         # Entering name 2
 
         self.player2_tip = Text(-1, 50, "Enter Player2 name", self.font, self.button_color_dark, self.screen)
-        self.text_box_p2 = TextBox(-1, 100, 300, 50, self.button_color_light, self.button_color_dark, self.font, self.button_color_dark, self.screen)
-        self.confirm_button_p2 = Button(-1, 160, 200, 50, self.button_color_light, self.button_color_dark, "Confirm", self.font, self.button_color_light, self.screen)
+        self.text_box_p2 = TextBox(-1, 100, 300, 50, self.button_color_light, (123, 123, 123), self.font, (0, 0, 0), self.screen)
+        self.confirm_button_p2 = Button(-1, 160, 200, 50, self.button_color_light, self.button_color_dark, "Confirm", self.font, (255, 255, 255), self.screen)
 
         self.player_top_text = Text(0, 0, "", self.font, self.button_color_dark, self.screen)
         self.player_bottom_text = Text(0, self.height - 45, "", self.font, self.button_color_dark, self.screen)
@@ -69,17 +69,17 @@ class Menu:
         self.top_is_drawing = False
         self.bottom_is_drawing = False
 
-        self.back_button = Button(5, 5, 100, 50, self.button_color_light, self.button_color_dark, "Back", self.font, self.button_color_light, self.screen)
+        self.back_button = Button(5, 5, 100, 50, self.button_color_light, self.button_color_dark, "Back", self.font, (255, 255, 255), self.screen)
 
         # Victory and draw texts
 
-        self.white_won_text = Text(-1, -1, "White Won", self.font2, self.button_color_dark, self.screen)
-        self.black_won_text = Text(-1, -1, "Black Won", self.font2, self.button_color_dark, self.screen)
-        self.draw_text = Text(-1, -1, "Draw", self.font2, self.button_color_dark, self.screen)
+        self.white_won_text = Text(-1, -1, "White Won", self.font2, (0, 0, 0), self.screen)
+        self.black_won_text = Text(-1, -1, "Black Won", self.font2, (0, 0, 0), self.screen)
+        self.draw_text = Text(-1, -1, "Draw", self.font2, (0, 0, 0), self.screen)
 
         # "Are you sure?" popup
 
-        self.ays_popup = PopUp("Are you sure?", self.font, "Yes", "No", self.button_color_light, self.button_color_dark, self.button_color_light,
+        self.ays_popup = PopUp("Are you sure?", self.font, "Yes", "No", self.button_color_light, self.button_color_dark, (255, 255, 255),
                                (123,123,123), 250, 200, self.screen)
 
         self.white_material_indicator = MaterialIndicator(0, (0,0,0), self.font, 100, 5, self.screen)
@@ -229,8 +229,8 @@ class Menu:
 
         # Player versus Bot
         elif self.which_screen == 1:
-            pygame.draw.rect(self.screen, self.button_color_light, [0, 0, self.width, 50])
-            pygame.draw.rect(self.screen, self.button_color_light, [0, self.height - 50, self.width, 50])
+            pygame.draw.rect(self.screen, (234, 234, 234), [0, 0, self.width, 50])
+            pygame.draw.rect(self.screen, (234, 234, 234), [0, self.height - 50, self.width, 50])
 
             self.player_top_text.update()
             self.player_bottom_text.update()
@@ -239,8 +239,8 @@ class Menu:
 
         # Player versus Player
         elif self.which_screen == 2:
-            pygame.draw.rect(self.screen, self.button_color_light, [0, 0, self.width, 50])
-            pygame.draw.rect(self.screen, self.button_color_light, [0, self.height - 50, self.width, 50])
+            pygame.draw.rect(self.screen, (234, 234, 234), [0, 0, self.width, 50])
+            pygame.draw.rect(self.screen, (234, 234, 234), [0, self.height - 50, self.width, 50])
 
             self.player_top_text.update()
             self.player_bottom_text.update()
