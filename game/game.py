@@ -31,8 +31,8 @@ class Game:
         self.font = pygame.font.SysFont("arial", 30)
 
         self.bot = Bot(self)
-        self.timer_top = Timer(600, 5, self.font, (255, 255, 255), self.screen)
-        self.timer_bottom = Timer(600, self.screen.get_height() - 45, self.font, (255, 255, 255), self.screen)
+        self.timer_top = Timer(self.screen.get_width() - 360, 5, self.font, (255, 255, 255), self.screen)
+        self.timer_bottom = Timer(self.screen.get_width() - 360, self.screen.get_height() - 45, self.font, (255, 255, 255), self.screen)
 
     def reset(self, bot):
         # Resetting the variables
