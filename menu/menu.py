@@ -51,13 +51,13 @@ class Menu:
 
         # Entering name 1
 
-        self.player1_tip = Text(-1, 50, "Enter Player1 name", self.font, self.button_color_dark, self.screen)
+        self.player1_tip = Text(-1, 50, "Enter Player1 name", self.font, (255, 255, 255), self.screen)
         self.text_box_p1 = TextBox(-1, 100, 300, 50, self.button_color_light, (123, 123, 123), self.font, (0, 0, 0), self.screen)
         self.confirm_button_p1 = Button(-1, 160, 200, 50, self.button_color_light, self.button_color_dark, "Confirm", self.font, (255, 255, 255), self.screen)
 
         # Entering name 2
 
-        self.player2_tip = Text(-1, 50, "Enter Player2 name", self.font, self.button_color_dark, self.screen)
+        self.player2_tip = Text(-1, 50, "Enter Player2 name", self.font, (255, 255, 255), self.screen)
         self.text_box_p2 = TextBox(-1, 100, 300, 50, self.button_color_light, (123, 123, 123), self.font, (0, 0, 0), self.screen)
         self.confirm_button_p2 = Button(-1, 160, 200, 50, self.button_color_light, self.button_color_dark, "Confirm", self.font, (255, 255, 255), self.screen)
 

@@ -451,7 +451,6 @@ class Piece:
         # Black
         elif color == 1:
             # Getting the moves forward
-            print(len(board), index)
             if board[index + self.num_of_rows] == 0:
                 if index in range(8, 16) and board[index + self.num_of_rows * 2] == 0:
                     legal_moves.append(index + self.num_of_rows * 2)

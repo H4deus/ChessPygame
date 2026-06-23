@@ -1,5 +1,3 @@
-from operator import index
-
 from piece import Piece
 
 class Bot:
@@ -7,8 +5,7 @@ class Bot:
         self.game = game
         self.num_of_rows = game.num_of_rows
         self.num_of_squares = game.num_of_squares
-        self.piece = Piece(game, -1, -1, -1, -1)
-        self.color = 1
+        self.color = 1 # 0 - white, 1 - black
 
         self.game_stage = 0 # 0 - opening, 1 - middlegame, 2 - endgame
 
@@ -20,7 +17,7 @@ class Bot:
                    0,    0,    0,  0.2,  0.2,    0,    0,    0,
                    0,    0,    0,  0.2,  0.2,    0,    0,    0,
                    0,    0,    0,  0.1,  0.1,    0,    0,    0,
-                   0,    0,    0, -0.3, -0.3,    0,    0,    0,
+                   0,    0,    0, -0.2, -0.2,    0,    0,    0,
                    0,    0,    0,    0,    0,    0,    0,    0
             ],
             [
@@ -54,7 +51,7 @@ class Bot:
                 -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2,
                 -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2,
                 -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2,
-                 0.2,  0.2,  0.1, -0.2, -0.2,  0.1,  0.2,  0.2
+                 0.2,  0.2, -0.2, -0.2, -0.2, -0.2,  0.2,  0.2
             ],
             [
                 -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2,
@@ -83,8 +80,8 @@ class Bot:
                    0,    0,    0,    0,    0,    0,    0,    0,
                    0,    0,    0,    0,    0,    0,    0,    0,
                    0,    0,    0,    0,    0,    0,    0,    0,
-                   0,    0,  0.1,  0.2,  0.2,  0.1,    0,    0,
-                   0,    0,  0.1,  0.2,  0.2,  0.1,    0,    0,
+                   0,    0,  0.1,  0.1,  0.1,  0.1,    0,    0,
+                   0,    0,  0.1,  0.1,  0.1,  0.1,    0,    0,
                    0,    0,    0,    0,    0,    0,    0,    0,
                    0,    0,    0,  0.1,  0.1,    0,    0,    0,
                 -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2
@@ -113,14 +110,14 @@ class Bot:
 
         self.rook_stages = [
             [
-                -0.3,    0,    0,    0,    0,    0,    0, -0.3,
+                -0.3, -0.2,    0,    0,    0,    0, -0.2, -0.3,
                  0.2,  0.2,  0.2,  0.2,  0.2,  0.2,  0.2,  0.2,
                    0,    0,    0,    0,    0,    0,    0,    0,
                    0,    0,    0,    0,    0,    0,    0,    0,
                    0,    0,    0,    0,    0,    0,    0,    0,
                    0,    0,    0,    0,    0,    0,    0,    0,
                    0,    0,    0,  0.1,  0.1,    0,    0,    0,
-                -0.3,    0,    0,  0.1,  0.1,    0,    0, -0.3
+                -0.3, -0.3,    0,  0.1,  0.1,    0, -0.3, -0.3
             ],
             [
                    0,    0,    0,    0,    0,    0,    0,    0,
@@ -179,14 +176,14 @@ class Bot:
 
         self.knight_stages = [
             [
-                -0.2, -0.3, -0.2, -0.2, -0.2, -0.2, -0.3, -0.2,
+                -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2,
                 -0.2,    0,    0,  0.1,  0.1,    0,    0, -0.2,
                 -0.2,    0,  0.1,    0,    0,  0.1,    0, -0.2,
                 -0.2,    0,    0,  0.2,  0.2,    0,    0, -0.2,
                 -0.2,    0,    0,  0.2,  0.2,    0,    0, -0.2,
-                -0.2,    0,  0.1,    0,    0,  0.1,    0, -0.2,
+                -0.2,    0,  0.2,    0,    0,  0.2,    0, -0.2,
                 -0.2,    0,    0,  0.1,  0.1,    0,    0, -0.2,
-                -0.2, -0.3, -0.2, -0.2, -0.2, -0.2, -0.3, -0.2
+                -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2
             ],
             [
                 -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2, -0.2,
@@ -214,6 +211,9 @@ class Bot:
         best_move = []
         best_move_score = None
 
+        enemy_best_move = []
+        enemy_best_move_score = None
+
         for index, piece in enumerate(pieces):
             if piece is None or piece.color != self.color:
                 continue
@@ -232,47 +232,9 @@ class Bot:
             new_black_can_long_castle = black_can_long_castle
 
             for move in legal_moves:
-                temp_board = board.copy()
-                temp_pieces = pieces.copy()
+                temp_board, temp_pieces, new_last_move, new_can_en_passant = self.process_move(board, pieces, piece, index, move, can_en_passant)
 
-                # Taking the piece if possible
-                if temp_board[move] != 0:
-                    temp_board[move] = 0
-                    temp_pieces[move] = None
-
-                # En passant
-                if piece.value % 10 == 1:
-                    # En passant to the right
-                    if temp_pieces[piece.index + 1] is not None and piece.color == temp_pieces[piece.index + 1].color:
-                        pass
-
-                    elif can_en_passant and temp_board[piece.index + 1] % 10 == 1 and index == piece.index + 1 - self.num_of_rows:
-                        temp_board[piece.index + 1] = 0
-                        temp_pieces[piece.index + 1] = None
-
-                    elif can_en_passant and temp_board[piece.index + 1] % 10 == 1 and index == piece.index + 1 + self.num_of_rows:
-                        temp_board[piece.index + 1] = 0
-                        temp_pieces[piece.index + 1] = None
-
-                    # En passant to the left
-                    elif temp_pieces[piece.index - 1] is not None and piece.color == temp_pieces[piece.index - 1].color:
-                        pass
-
-                    elif can_en_passant and temp_board[piece.index - 1] % 10 == 1 and index == piece.index - 1 - self.num_of_rows:
-                        temp_board[piece.index - 1] = 0
-                        temp_pieces[piece.index - 1] = None
-
-                    elif can_en_passant and temp_board[piece.index - 1] % 10 == 1 and index == piece.index - 1 + self.num_of_rows:
-                        temp_board[piece.index - 1] = 0
-                        temp_pieces[piece.index - 1] = None
-
-                    # Checking if can en passant
-                    if abs(index - piece.index) == 2 * self.num_of_rows:
-                        new_can_en_passant = True
-                    else:
-                        new_can_en_passant = False
-                else:
-                    new_can_en_passant = False
+                # self.print_board(temp_board)
 
                 # Castling
                 # Disallowing if any of the relevant pieces have moved
@@ -288,39 +250,9 @@ class Bot:
                 if temp_board[0] != 14 or temp_board[4] != 12:
                     new_black_can_long_castle = False
 
-                # Moving the rook if the king castled
-                if piece.value % 10 == 2 and abs(piece.index - index) == 2:
-                    # White
-                    if piece.color == 0:
-                        # Short castle
-                        if piece.index < index:
-                            temp_board = self.swap_in_list(temp_board, piece.index + 1, 63)
-                            temp_pieces = self.swap_in_list(temp_pieces, piece.index + 1, 63)
-                        # Long castle
-                        if piece.index > index:
-                            temp_board = self.swap_in_list(temp_board, piece.index - 1, 56)
-                            temp_pieces = self.swap_in_list(temp_pieces, piece.index - 1, 56)
-                    # Black
-                    elif piece.color == 1:
-                        # Short castle
-                        if piece.index < index:
-                            temp_board = self.swap_in_list(temp_board, piece.index + 1, 7)
-                            temp_pieces = self.swap_in_list(temp_pieces, piece.index + 1, 7)
-                        # Long castle
-                        if piece.index > index:
-                            temp_board = self.swap_in_list(temp_board, piece.index - 1, 0)
-                            temp_pieces = self.swap_in_list(temp_pieces, piece.index - 1, 0)
-
-                # Promoting the pawn into a queen
-                if temp_board[index] == 1 and index < self.num_of_rows:
-                    temp_board[index] = 3
-                elif temp_board[index] == 11 and index >= self.num_of_squares - self.num_of_rows:
-                    temp_board[index] = 13
-
-                temp_board = self.swap_in_list(temp_board, index, move)
-                temp_pieces = self.swap_in_list(temp_pieces, index, move)
-
-                new_last_move = index
+                enemy_made_move = False
+                enemy_best_move = []
+                enemy_best_move_score = None
 
                 for new_index, new_piece in enumerate(temp_pieces):
                     if new_piece is None or new_piece.color == self.color:
@@ -332,78 +264,46 @@ class Bot:
                         new_legal_moves = new_piece.get_legal_moves(temp_board, temp_pieces, -1, -1, -1, new_last_move, new_can_en_passant, new_white_can_short_castle, new_white_can_long_castle)
 
                     for new_move in new_legal_moves:
-                        new_temp_board = temp_board.copy()
-                        new_temp_pieces = temp_pieces.copy()
+                        enemy_made_move = True
+                        new_temp_board, new_temp_pieces, new_temp_last_move, new_temp_can_en_passant = self.process_move(temp_board, temp_pieces, new_piece, new_index, new_move, new_can_en_passant)
 
-                        # Taking the piece if possible
-                        if new_temp_board[move] != 0:
-                            new_temp_board[move] = 0
-                            new_temp_pieces[move] = None
+                        if enemy_best_move_score is None or self.evaluate_pos(new_temp_pieces, new_temp_board, True) < enemy_best_move_score:
+                            enemy_best_move = [new_index, new_move]
+                            enemy_best_move_score = self.evaluate_pos(new_temp_pieces, new_temp_board, True)
 
-                        # En passant
-                        if new_piece.value % 10 == 1:
-                            # En passant to the right
-                            if new_temp_pieces[new_piece.index + 1] is not None and new_piece.color == new_temp_pieces[new_piece.index + 1].color:
-                                pass
+                black_attacks, white_attacks = self.game.reset_attacks(temp_pieces, temp_board)
 
-                            elif new_can_en_passant and new_temp_board[new_piece.index + 1] % 10 == 1 and new_index == new_piece.index + 1 - self.num_of_rows:
-                                new_temp_board[piece.index + 1] = 0
-                                new_temp_pieces[piece.index + 1] = None
+                if 2 in temp_board and black_attacks[temp_board.index(2)] != 0:
+                    white_in_check = True
+                    print("white checked")
+                else:
+                    white_in_check = False
 
-                            elif new_can_en_passant and new_temp_board[new_piece.index + 1] % 10 == 1 and new_index == new_piece.index + 1 + self.num_of_rows:
-                                new_temp_board[piece.index + 1] = 0
-                                new_temp_pieces[piece.index + 1] = None
+                # Checking if black is in check
+                if 12 in temp_board and white_attacks[temp_board.index(12)] != 0:
+                    black_in_check = True
+                    print("black checked")
+                else:
+                    black_in_check = False
 
-                            # En passant to the left
-                            elif new_temp_pieces[new_piece.index - 1] is not None and new_piece.color == new_temp_pieces[new_piece.index - 1].color:
-                                pass
+                if index == 59 and move == 31:
+                    print(enemy_made_move, index, move, enemy_best_move, enemy_best_move_score)
 
-                            elif new_can_en_passant and new_temp_board[new_piece.index - 1] % 10 == 1 and new_index == new_piece.index - 1 - self.num_of_rows:
-                                new_temp_board[piece.index - 1] = 0
-                                new_temp_pieces[piece.index - 1] = None
+                if not enemy_made_move:
+                    print(index, move)
+                    if self.color == 0 and black_in_check:
+                        return [index, move]
+                    elif self.color == 1 and white_in_check:
+                        return [index, move]
 
-                            elif new_can_en_passant and new_temp_board[new_piece.index - 1] % 10 == 1 and new_index == new_piece.index - 1 + self.num_of_rows:
-                                new_temp_board[piece.index - 1] = 0
-                                new_temp_pieces[piece.index - 1] = None
+                temp_board = self.swap_in_list(temp_board, enemy_best_move[0], enemy_best_move[1])
+                temp_pieces = self.swap_in_list(temp_pieces, enemy_best_move[0], enemy_best_move[1])
 
-                        # Moving the rook if the king castled
-                        if new_piece.value % 10 == 2 and abs(new_piece.index - new_index) == 2:
-                            # White
-                            if new_piece.color == 0:
-                                # Short castle
-                                if new_piece.index < new_index:
-                                    new_temp_board = self.swap_in_list(new_temp_board, new_piece.index + 1, 63)
-                                    new_temp_pieces = self.swap_in_list(new_temp_pieces, new_piece.index + 1, 63)
-                                # Long castle
-                                if new_piece.index > new_index:
-                                    new_temp_board = self.swap_in_list(new_temp_board, new_piece.index - 1, 56)
-                                    new_temp_pieces = self.swap_in_list(new_temp_pieces, new_piece.index - 1, 56)
-                            # Black
-                            elif new_piece.color == 1:
-                                # Short castle
-                                if new_piece.index < new_index:
-                                    new_temp_board = self.swap_in_list(new_temp_board, new_piece.index + 1, 7)
-                                    new_temp_pieces = self.swap_in_list(new_temp_pieces, new_piece.index + 1, 7)
-                                # Long castle
-                                if new_piece.index > new_index:
-                                    new_temp_board = self.swap_in_list(new_temp_board, new_piece.index - 1, 0)
-                                    new_temp_pieces = self.swap_in_list(new_temp_pieces, new_piece.index - 1, 0)
+                if best_move_score is None or self.evaluate_pos(temp_pieces, temp_board, True) > best_move_score:
+                    best_move = [index, move]
+                    best_move_score = self.evaluate_pos(temp_pieces, temp_board, True)
 
-                        # Promoting the pawn into a queen
-                        if new_temp_board[index] == 1 and new_index < self.num_of_rows:
-                            new_temp_board[index] = 3
-                        elif new_temp_board[index] == 11 and new_index >= self.num_of_squares - self.num_of_rows:
-                            new_temp_board[index] = 13
-
-                        new_temp_board = self.swap_in_list(new_temp_board, new_index, new_move)
-                        new_temp_pieces = self.swap_in_list(new_temp_pieces, new_index, new_move)
-
-                        if best_move_score is None or self.evaluate_pos(new_temp_pieces, new_temp_board, True) > best_move_score:
-                            best_move = [index, move]
-                            best_move_score = self.evaluate_pos(new_temp_pieces, new_temp_board, True)
-
-
-        print(best_move)
+        # print(best_move, enemy_best_move, best_move_score)
         return best_move
 
     def swap_in_list(self, list, a, b):
@@ -806,10 +706,89 @@ class Bot:
 
         score += best_capture
 
-        print(changes)
-
-        print(score)
+        # print(changes)
+        #
+        # print(score)
         return score
+
+    def process_move(self, board, pieces, piece, index, move, can_en_passant):
+        temp_board = board.copy()
+        temp_pieces = pieces.copy()
+
+        # Taking the piece if possible
+        if temp_board[move] != 0:
+            temp_board[move] = 0
+            temp_pieces[move] = None
+
+        # En passant
+        if piece.value % 10 == 1:
+            # En passant to the right
+            if temp_pieces[piece.index + 1] is not None and piece.color == temp_pieces[piece.index + 1].color:
+                pass
+
+            elif can_en_passant and temp_board[piece.index + 1] % 10 == 1 and index == piece.index + 1 - self.num_of_rows:
+                temp_board[piece.index + 1] = 0
+                temp_pieces[piece.index + 1] = None
+
+            elif can_en_passant and temp_board[piece.index + 1] % 10 == 1 and index == piece.index + 1 + self.num_of_rows:
+                temp_board[piece.index + 1] = 0
+                temp_pieces[piece.index + 1] = None
+
+            # En passant to the left
+            elif temp_pieces[piece.index - 1] is not None and piece.color == temp_pieces[piece.index - 1].color:
+                pass
+
+            elif can_en_passant and temp_board[piece.index - 1] % 10 == 1 and index == piece.index - 1 - self.num_of_rows:
+                temp_board[piece.index - 1] = 0
+                temp_pieces[piece.index - 1] = None
+
+            elif can_en_passant and temp_board[piece.index - 1] % 10 == 1 and index == piece.index - 1 + self.num_of_rows:
+                temp_board[piece.index - 1] = 0
+                temp_pieces[piece.index - 1] = None
+
+            # Checking if can en passant
+            if abs(index - piece.index) == 2 * self.num_of_rows:
+                new_can_en_passant = True
+            else:
+                new_can_en_passant = False
+        else:
+            new_can_en_passant = False
+
+        # Moving the rook if the king castled
+        if piece.value % 10 == 2 and abs(piece.index - move) == 2:
+            # White
+            if piece.color == 0:
+                # Short castle
+                if piece.index < move:
+                    temp_board = self.swap_in_list(temp_board, piece.index + 1, 63)
+                    temp_pieces = self.swap_in_list(temp_pieces, piece.index + 1, 63)
+                # Long castle
+                if piece.index > move:
+                    temp_board = self.swap_in_list(temp_board, piece.index - 1, 56)
+                    temp_pieces = self.swap_in_list(temp_pieces, piece.index - 1, 56)
+            # Black
+            elif piece.color == 1:
+                # Short castle
+                if piece.index < move:
+                    temp_board = self.swap_in_list(temp_board, piece.index + 1, 7)
+                    temp_pieces = self.swap_in_list(temp_pieces, piece.index + 1, 7)
+                # Long castle
+                if piece.index > move:
+                    temp_board = self.swap_in_list(temp_board, piece.index - 1, 0)
+                    temp_pieces = self.swap_in_list(temp_pieces, piece.index - 1, 0)
+
+        # Promoting the pawn into a queen
+        if temp_board[index] == 1 and index < self.num_of_rows:
+            temp_board[index] = 3
+        elif temp_board[index] == 11 and index >= self.num_of_squares - self.num_of_rows:
+            temp_board[index] = 13
+
+        temp_board = self.swap_in_list(temp_board, index, move)
+        temp_pieces = self.swap_in_list(temp_pieces, index, move)
+
+        new_last_move = index
+
+        return (temp_board, temp_pieces, new_last_move, new_can_en_passant)
 
     def get_own_attacks(self, pieces, board):
         pawn_attacks = []
@@ -904,9 +883,12 @@ class Bot:
         return pawn_attacks, king_attacks, queen_attacks, rook_attacks, bishop_attacks, knight_attacks
 
     def print_board(self, board):
+        if self.color == 0:
+            board = board[::-1]
         for i, v in enumerate(board):
-            print(v, end=" ")
+            if v < 10:
+                print(" " + str(v), end=" ")
+            else:
+                print(v, end=" ")
             if i % 8 == 7:
                 print()
-
-
