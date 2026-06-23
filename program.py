@@ -5,7 +5,7 @@ from menu.menu import Menu
 class Program:
     def __init__(self):
         pygame.init()
-        res = (800, 900)
+        res = (1024, 1124)
 
         self.screen = pygame.display.set_mode(res)
         pygame.display.set_caption("Chess")

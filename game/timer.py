@@ -28,6 +28,7 @@ class Timer:
         pygame.draw.rect(self.screen, (0,0,0), (self.x, self.y, 100, 40))
 
         if self.last_time != datetime.now().second and not self.pause:
+            print("changing the time")
             self.time -= 1
 
         self.text.text = self.convert_time_to_string(self.time)

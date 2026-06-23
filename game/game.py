@@ -47,7 +47,7 @@ class Game:
             self.timer_top.set_time(300)
             self.timer_bottom.set_time(300)
             self.timer_top.pause = True
-            self.timer_bottom.pause = True
+            self.timer_bottom.pause = False
         else:
             self.flip = False
             if random.random() < 0.5:
@@ -335,6 +335,10 @@ class Game:
 
         self.past_positions.append(self.board)
 
+        # Pausing and unpausing the timers
+        if self.flip:
+            self.timer_top.time, self.timer_bottom.time = self.timer_bottom.time, self.timer_top.time
+
     def swap_in_list(self, list, a, b):
         if a == b: return list
         if a > b: a, b = b, a
@@ -463,6 +467,14 @@ class Game:
         for arrow in self.arrows:
             arr = Arrow(self.screen, arrow[0], arrow[1], self.num_of_rows, self.square_size, self.y_offset)
             self.drawn_arrows.append(arr)
+
+        # Making the bot move if it's its turn
+        if not self.flip and ((self.whose_turn and not self.white_is_player) or (not self.whose_turn and self.white_is_player)):
+            bot_move = self.bot.get_move(self.pieces, self.board, self.last_move, self.can_en_passant,
+                                         self.white_can_short_castle, self.black_can_short_castle,
+                                         self.white_can_long_castle, self.black_can_long_castle)
+            if len(bot_move) > 0:
+                self.make_move(self.pieces[bot_move[0]], bot_move[1])
 
         if not self.flip:
             return
